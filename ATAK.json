@@ -1,0 +1,212 @@
+[
+    {
+        "id": "04c94be939cfa751",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": true,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "b28ae317e8a49819",
+        "type": "mqtt in",
+        "z": "04c94be939cfa751",
+        "name": "",
+        "topic": "#",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "f931e0e47965413a",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 430,
+        "y": 400,
+        "wires": [
+            [
+                "e965d83e97d7733b",
+                "0c066ac90c2471ca"
+            ]
+        ]
+    },
+    {
+        "id": "e965d83e97d7733b",
+        "type": "debug",
+        "z": "04c94be939cfa751",
+        "name": "Debug 2",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 920,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "c4f593f673965669",
+        "type": "influxdb out",
+        "z": "04c94be939cfa751",
+        "influxdb": "eef96b2efcc0eb8b",
+        "name": "TacB-Sensmax",
+        "measurement": "go_info",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "s",
+        "retentionPolicyV18Flux": "",
+        "org": "DSTA",
+        "bucket": "Sensor Data",
+        "x": 880,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "0c066ac90c2471ca",
+        "type": "function",
+        "z": "04c94be939cfa751",
+        "name": "TacB Sensor Parser",
+        "func": "var data = msg.payload;\nvar messageType = data.messageType;\nvar id = data.id;\nvar collector_id = data.collector_id;\nvar collector_serial = data.collector_serial;\nvar total_detected_objects = data.total_detected_objects;\nmsg.payload = {\n    messageType: messageType,\n    id: id,\n    collector_id: collector_id,\n    collector_serial: collector_serial,\n    total_detected_objects: total_detected_objects\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 640,
+        "y": 520,
+        "wires": [
+            [
+                "c4f593f673965669"
+            ]
+        ]
+    },
+    {
+        "id": "372907d3da1259d3",
+        "type": "mqtt in",
+        "z": "04c94be939cfa751",
+        "name": "",
+        "topic": "#",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "7e5ea1772b12a4f1",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 410,
+        "y": 240,
+        "wires": [
+            [
+                "83cee981b1a5eb63",
+                "e067752f6678b468"
+            ]
+        ]
+    },
+    {
+        "id": "83cee981b1a5eb63",
+        "type": "debug",
+        "z": "04c94be939cfa751",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 900,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "e067752f6678b468",
+        "type": "function",
+        "z": "04c94be939cfa751",
+        "name": "PCR2 Sensor Parser",
+        "func": "var data = msg.payload.uplink_message.decoded_payload;\nvar left_to_right = data.presence_0;\nvar right_to_left = data.presence_1;\nmsg.payload = {\n    left_to_right: left_to_right,\n    right_to_left: right_to_left\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 660,
+        "y": 300,
+        "wires": [
+            [
+                "c4f593f673965669"
+            ]
+        ]
+    },
+    {
+        "id": "f931e0e47965413a",
+        "type": "mqtt-broker",
+        "name": "Sensmax",
+        "broker": "192.168.1.2",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "eef96b2efcc0eb8b",
+        "type": "influxdb",
+        "hostname": "192.168.1.2",
+        "port": "8086",
+        "protocol": "http",
+        "database": "TacB-Sensmax",
+        "name": "TicTacToh",
+        "usetls": false,
+        "tls": "",
+        "influxdbVersion": "2.0",
+        "url": "http://localhost:8086",
+        "rejectUnauthorized": true
+    },
+    {
+        "id": "7e5ea1772b12a4f1",
+        "type": "mqtt-broker",
+        "name": "PCR2",
+        "broker": "au1.cloud.thethings.network",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    }
+]
