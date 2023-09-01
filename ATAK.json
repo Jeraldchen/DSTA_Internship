@@ -1,0 +1,213 @@
+[
+    {
+        "id": "635e95ce92164084",
+        "type": "tab",
+        "label": "ATAK ",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "79b17171582dc889",
+        "type": "tak",
+        "z": "635e95ce92164084",
+        "name": "TAK",
+        "x": 510,
+        "y": 360,
+        "wires": [
+            [
+                "34cc64c141f5c3d8",
+                "37f6dac280322f60",
+                "2c7061de666dd3f0"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "a9e32668e2ef561b",
+        "type": "function",
+        "z": "635e95ce92164084",
+        "name": "Parser 1",
+        "func": "/* \nExample JSON containing the keys & values for popular cursor on target CoT \nfields, including time, point latitude & longitude, type, and more.\n*/\n\n/* Stale is Date.now() + miliseconds. \n Ruberic: 1000 Miliseconds in 1 Second\n Example: 5 Minutes, in Miliseconds, is 300000\n   (5 x 60 * 1000 )\n*/\nconst five_min = 5 * 60 * 1000;\nconst ten_min = 2 * five_min;\nconst stale = new Date(Date.now() + ten_min).toISOString();\n\n/*\nNot all fields are required for display on most TAK Products, other systems may \nhave different requirements. YMMV.\n*/\n\nvar data = msg.payload.uplink_message.decoded_payload;\nvar latitude = data.latitude;\nvar longitude = data.longitude;\n\nmsg.payload = {\n    \"event\": {\n        \"_attributes\": {\n            \"version\": \"2.0\",\n            \"uid\": \"Bob\",\n            \"type\": \"a-f-G-U-S-T-A-C\",\n            \"how\": \"m-p\",\n            \"time\": new Date(Date.now()).toISOString(),\n            \"start\": new Date(Date.now()).toISOString(),\n            \"stale\": stale\n        },\n        \"point\": {\n            \"_attributes\": {\n                \"lat\": latitude,\n                \"lon\": longitude,\n                \"hae\": \"0.0\",\n                \"ce\": \"9999999.0\",\n                \"le\": \"9999999.0\"\n            }\n        },\n        \"detail\": {}\n        }\n}\n\nreturn msg; ",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 300,
+        "y": 360,
+        "wires": [
+            [
+                "79b17171582dc889"
+            ]
+        ]
+    },
+    {
+        "id": "34cc64c141f5c3d8",
+        "type": "debug",
+        "z": "635e95ce92164084",
+        "name": "CoT as XML",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 750,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "37f6dac280322f60",
+        "type": "tcp out",
+        "z": "635e95ce92164084",
+        "name": "",
+        "host": "137.184.101.250",
+        "port": "8087",
+        "beserver": "client",
+        "base64": false,
+        "end": false,
+        "tls": "",
+        "x": 800,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "2c7061de666dd3f0",
+        "type": "udp out",
+        "z": "635e95ce92164084",
+        "d": true,
+        "name": "",
+        "addr": "239.2.3.1",
+        "iface": "",
+        "port": "6969",
+        "ipv": "udp4",
+        "outport": "",
+        "base64": false,
+        "multicast": "multi",
+        "x": 770,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "41fe9a285253e91f",
+        "type": "mqtt in",
+        "z": "635e95ce92164084",
+        "name": "",
+        "topic": "v3/gps-ble-test1@ttn/devices/eui-20635f03910001fc/up",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "e3ce9ae6bf957c62",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 380,
+        "y": 100,
+        "wires": [
+            [
+                "1596dc624f0c81d7",
+                "a9e32668e2ef561b",
+                "345bd5a14929afb6"
+            ]
+        ]
+    },
+    {
+        "id": "1596dc624f0c81d7",
+        "type": "debug",
+        "z": "635e95ce92164084",
+        "name": "Abeeway Microtracker Data ",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 300,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "ef3206b6c6d91c75",
+        "type": "worldmap",
+        "z": "635e95ce92164084",
+        "name": "",
+        "lat": "",
+        "lon": "",
+        "zoom": "",
+        "layer": "",
+        "cluster": "",
+        "maxage": "",
+        "usermenu": "show",
+        "layers": "show",
+        "panit": "false",
+        "panlock": "false",
+        "zoomlock": "false",
+        "hiderightclick": "false",
+        "coords": "false",
+        "showgrid": "false",
+        "showruler": "false",
+        "allowFileDrop": "false",
+        "path": "/worldmap",
+        "overlist": "DR,CO,RA,DN,HM",
+        "maplist": "OSMG,OSMC,EsriC,EsriS,EsriT,EsriDG,UKOS",
+        "mapname": "",
+        "mapurl": "",
+        "mapopt": "",
+        "mapwms": false,
+        "x": 640,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "345bd5a14929afb6",
+        "type": "function",
+        "z": "635e95ce92164084",
+        "name": "Parser 2",
+        "func": "var data = msg.payload.uplink_message.decoded_payload;\nvar latitude = data.latitude;\nvar longitude = data.longitude;\n\nmsg.payload = {\n    \"name\": \"Peter\",\n    \"lat\": latitude,\n    \"lon\": longitude\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 660,
+        "wires": [
+            [
+                "ef3206b6c6d91c75"
+            ]
+        ]
+    },
+    {
+        "id": "e3ce9ae6bf957c62",
+        "type": "mqtt-broker",
+        "name": "Abeeway MicroTracker",
+        "broker": "au1.cloud.thethings.network",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    }
+]
